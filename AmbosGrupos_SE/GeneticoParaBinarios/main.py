@@ -12,7 +12,9 @@ tot_individuos = 100  #numero de individuos
 import random as rnd
 poblacion = []
 for i in range(tot_individuos):
-    poblacion.append([ rnd.randint(0,1)  for i in range(tot_genes)])
+    vector = [ rnd.randint(0,1)  for i in range(tot_genes)]
+    ##               vector , FO
+    poblacion.append([vector, calc_FO(vector)])
 
 #print("Poblacion Inicial: ")
 #for indv in poblacion:
@@ -21,14 +23,25 @@ for i in range(tot_individuos):
 padres = []
 tot_padres = 50
 
-for i in range(tot_padres):
-    indexPadre1 = rnd.randint(0, tot_individuos-1) #aleatorio entre 0 y n-1
-    indexPadre2 = rnd.randint(0, tot_individuos-1) #aleatorio entre 0 y n-1
-    while(indexPadre1==indexPadre2):
-        indexPadre2 = rnd.randint(0, tot_individuos - 1)  # aleatorio entre 0 y n-1
+poblacion.sort(key= lambda x:x[1], reverse=True)
+#sorted(poblacion, key= lambda)
 
-    tempPadre1 = poblacion[indexPadre1]
-    tempPadre2 = poblacion[indexPadre2]
+#print("Poblacion Ordenada: ")
+#for indv in poblacion:
+#    print(indv)
+
+#Me quedo con los MejoresPadres
+poblacion = poblacion[0:tot_padres]
+print("tot poblaciond de mejores: " , len(poblacion))
+
+for i in range(tot_padres):
+    indexPadre1 = rnd.randint(0, tot_padres-1) #aleatorio entre 0 y n-1
+    indexPadre2 = rnd.randint(0, tot_padres-1) #aleatorio entre 0 y n-1
+    while(indexPadre1==indexPadre2):
+        indexPadre2 = rnd.randint(0, tot_padres - 1)  # aleatorio entre 0 y n-1
+
+    tempPadre1 = poblacion[indexPadre1][0]
+    tempPadre2 = poblacion[indexPadre2][0]
 
     if calc_FO(tempPadre1) >= calc_FO(tempPadre2):
         padres.append(tempPadre1.copy())
@@ -45,7 +58,7 @@ for i in range(0,tot_padres, 2):
     tempPadre2 = padres[i+1]
 
     #Generar un aleatorio
-    puntoCruza = rnd.randint(tot_genes)
+    puntoCruza = rnd.randint(0, tot_genes-1)
 
     #La primera parte del padre 1, será la primera parte del hijo 1,
     # la segunda parte del padre 1, será la segunda parte del hijo 2
@@ -53,5 +66,29 @@ for i in range(0,tot_padres, 2):
     # La primera parte del padre 2, será la primera parte del hijo 2,
     # la segunda parte del padre 2, será la segunda parte del hijo 1
 
-    hijo1 = []
-    hijo2 = []
+    # Generar un aleatorio
+    puntoCruza += 1  # +1 -> puntoCruza incluyente
+    hijo1 = tempPadre1[:puntoCruza] + tempPadre2[puntoCruza:]
+    hijo2 = tempPadre2[:puntoCruza] + tempPadre1[puntoCruza:]
+
+    hijos.append([hijo1, 0])
+    hijos.append([hijo2, 0])
+
+
+#Mutacion
+probMuta = 0.8
+for indexHijo in range(len(hijos)):
+    hijo = hijos[indexHijo][0]
+
+    for indexGen in range(len(hijo)):
+        r = rnd.random() # 0 - 1
+        if r >= probMuta:
+            #se efectua la mutacion
+            val = 1 if rnd.random() >= 0.5 else 0
+            #print(val)
+            hijo[indexGen] = val
+
+    hijos[indexHijo][1] = calc_FO(hijo)
+
+##poblacion completa
+#hijos
