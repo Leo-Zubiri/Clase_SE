@@ -3,10 +3,10 @@ def calc_FO(indv):
     return sum(indv)
 
 #m = numero de genes
-tot_genes = 10
+tot_genes = 1000
 
 #n  = numero de vectores
-tot_individuos = 100  #numero de individuos
+tot_individuos = 120  #numero de individuos
 
 #Poblacion Inicial
 import random as rnd
@@ -20,75 +20,101 @@ for i in range(tot_individuos):
 #for indv in poblacion:
 #    print(indv)
 
-padres = []
-tot_padres = 50
+it = 1
+mejorActual = -1
+while it<=1000:
+    print("Iteracion : ", it)
+    it+=1
 
-poblacion.sort(key= lambda x:x[1], reverse=True)
-#sorted(poblacion, key= lambda)
+    padres = []
+    tot_padres = 20
 
-#print("Poblacion Ordenada: ")
-#for indv in poblacion:
-#    print(indv)
+    poblacion.sort(key= lambda x:x[1], reverse=True)
+    #sorted(poblacion, key= lambda)
 
-#Me quedo con los MejoresPadres
-poblacion = poblacion[0:tot_padres]
-print("tot poblaciond de mejores: " , len(poblacion))
+    if poblacion[0][1] >= mejorActual:
+        mejorActual = poblacion[0][1]
 
-for i in range(tot_padres):
-    indexPadre1 = rnd.randint(0, tot_padres-1) #aleatorio entre 0 y n-1
-    indexPadre2 = rnd.randint(0, tot_padres-1) #aleatorio entre 0 y n-1
-    while(indexPadre1==indexPadre2):
-        indexPadre2 = rnd.randint(0, tot_padres - 1)  # aleatorio entre 0 y n-1
+    #print("Poblacion Ordenada: ")
+    #for indv in poblacion:
+    #    print(indv)
 
-    tempPadre1 = poblacion[indexPadre1][0]
-    tempPadre2 = poblacion[indexPadre2][0]
+    #Me quedo con los MejoresPadres
+    poblacion = poblacion[0:tot_individuos-tot_padres]
+    #print("tot poblacion de mejores: " , len(poblacion))
 
-    if calc_FO(tempPadre1) >= calc_FO(tempPadre2):
-        padres.append(tempPadre1.copy())
-    else:
-        padres.append(tempPadre2.copy())
+    ##Seleccion de los padres que seran cruzados
+    for i in range(tot_padres):
+        indexPadre1 = rnd.randint(0, tot_padres-1) #aleatorio entre 0 y n-1
+        indexPadre2 = rnd.randint(0, tot_padres-1) #aleatorio entre 0 y n-1
+        while(indexPadre1==indexPadre2):
+            indexPadre2 = rnd.randint(0, tot_padres - 1)  # aleatorio entre 0 y n-1
 
-#print("Padres para cruza: ")
-#for index, padre in enumerate(padres):
-#    print(index,".-", padre)
+        tempPadre1 = poblacion[indexPadre1]
+        tempPadre2 = poblacion[indexPadre2]
 
-hijos = []
-for i in range(0,tot_padres, 2):
-    tempPadre1 = padres[i]
-    tempPadre2 = padres[i+1]
+        #print(tempPadre1)
+        #print(tempPadre2)
 
-    #Generar un aleatorio
-    puntoCruza = rnd.randint(0, tot_genes-1)
+        if tempPadre1[1] >= tempPadre2[1]:
+            padres.append(tempPadre1[0].copy())
+        else:
+            padres.append(tempPadre2[0].copy())
 
-    #La primera parte del padre 1, será la primera parte del hijo 1,
-    # la segunda parte del padre 1, será la segunda parte del hijo 2
+    #print("Padres para cruza: ")
+    #for index, padre in enumerate(padres):
+    #    print(index,".-", padre)
 
-    # La primera parte del padre 2, será la primera parte del hijo 2,
-    # la segunda parte del padre 2, será la segunda parte del hijo 1
+    hijos = []
+    for i in range(0,tot_padres, 2):
+        tempPadre1 = padres[i]
+        tempPadre2 = padres[i+1]
 
-    # Generar un aleatorio
-    puntoCruza += 1  # +1 -> puntoCruza incluyente
-    hijo1 = tempPadre1[:puntoCruza] + tempPadre2[puntoCruza:]
-    hijo2 = tempPadre2[:puntoCruza] + tempPadre1[puntoCruza:]
+        #Generar un aleatorio
+        puntoCruza = rnd.randint(0, tot_genes-1)
 
-    hijos.append([hijo1, 0])
-    hijos.append([hijo2, 0])
+        #La primera parte del padre 1, será la primera parte del hijo 1,
+        # la segunda parte del padre 1, será la segunda parte del hijo 2
+
+        # La primera parte del padre 2, será la primera parte del hijo 2,
+        # la segunda parte del padre 2, será la segunda parte del hijo 1
+
+        # Generar un aleatorio
+        puntoCruza += 1  # +1 -> puntoCruza incluyente
+        hijo1 = tempPadre1[:puntoCruza] + tempPadre2[puntoCruza:]
+        hijo2 = tempPadre2[:puntoCruza] + tempPadre1[puntoCruza:]
+
+        hijos.append([hijo1, 0])
+        hijos.append([hijo2, 0])
 
 
-#Mutacion
-probMuta = 0.8
-for indexHijo in range(len(hijos)):
-    hijo = hijos[indexHijo][0]
+    #Mutacion
+    probMuta = 0.9
+    for indexHijo in range(len(hijos)):
+        hijo = hijos[indexHijo][0]
 
-    for indexGen in range(len(hijo)):
-        r = rnd.random() # 0 - 1
-        if r >= probMuta:
-            #se efectua la mutacion
-            val = 1 if rnd.random() >= 0.5 else 0
-            #print(val)
-            hijo[indexGen] = val
+        for indexGen in range(len(hijo)):
+            r = rnd.random() # 0 - 1
+            if r >= probMuta:
+                #se efectua la mutacion
+                val = 1 if rnd.random() >= 0.5 else 0
+                #print(val)
 
-    hijos[indexHijo][1] = calc_FO(hijo)
+                #if hijo[indexGen] != val:
+                #    pass
 
-##poblacion completa
-#hijos
+                hijo[indexGen] = val
+
+        hijos[indexHijo][1] = calc_FO(hijo)
+
+    ##poblacion completa
+    #mejores individuos + hijos
+    poblacion += hijos
+
+
+    #print("Nueva Poblacion: ")
+    #for indv in poblacion:
+    #    print(indv)
+
+    print("Mejor Solucion Actual:" , mejorActual)
+
