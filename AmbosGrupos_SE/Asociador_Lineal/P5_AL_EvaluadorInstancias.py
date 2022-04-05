@@ -7,7 +7,7 @@
 
 import numpy as n
 
-archivo = open("instancia_claseExplicacion.txt")
+archivo = open("instancia_claseExplicacion_training.txt")
 contenido = archivo.readlines()
 
 X = contenido[3:3+int(contenido[1])]
@@ -36,12 +36,31 @@ print(Y)
 print("W:")
 print(W)
 
-
-###PRUEBA DE LA FUNCIOANLIDA DEL ASOCIADOR LINEA
-#VAMOS A PROBAR CADA UNO DE LOS CASOS PARA OBSERVAR SI LA RED ES CAPAZ DE
-#CLASIFICAR CORRECTAMENTE
-
+#################################################################################################
+#################################################################################################
+### EVALUACION DE LOS CASOS DE PRUEBA
+#################################################################################################
+#################################################################################################
 print("Prueba...")
+archivo = open("instancia_claseExplicacion_test.txt")
+contenido = archivo.readlines()
+
+X = contenido[3:3+int(contenido[1])]
+X = [i.split("\t") for i in X]
+X = [list(map(int, i)) for i in X]
+
+Y = contenido[3+int(contenido[1]):]
+Y = [i.split("\t") for i in Y]
+Y = [list(map(int, i)) for i in Y]
+
+X = n.array(X)
+Y = n.array(Y)
+
+print("X:")
+print(X)
+
+print("Y:")
+print(Y)
 
 casosCorrectos = 0
 
@@ -76,21 +95,3 @@ print("Total de Casos Analizados: ", X.shape[1])
 print("Total de Casos Correctos: ", casosCorrectos)
 
 print("Eficiencia del Asociador Lineal: ", casosCorrectos/X.shape[1]*100.0)
-
-
-#UTILIZACIÓN DEL ASOCIADOR LINEAL...
-print("\n\nPrueba de funcionamiento del asociador lineal: ")
-
-#0 0 1  = GUERRERO
-x = [78, 53, 11, 30, 86, 23]
-y = "GUERRERO"
-
-x = n.array(x)
-Ycasox = W.dot(x)
-
-print(Ycasox)
-IndexMaxYcasoi = list(Ycasox).index(max(Ycasox))
-
-print("Clase Asignada: ", Clases[IndexMaxYcasoi])
-
-print("Correcto " if Clases[IndexMaxYcasoi] == y else "Incorrecto")

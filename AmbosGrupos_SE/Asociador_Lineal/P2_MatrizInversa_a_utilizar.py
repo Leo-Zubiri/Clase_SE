@@ -3,18 +3,18 @@
 
 import numpy as n
 
-archivo = open("instancia_prueba.txt")
+archivo = open("instancia_claseExplicacion.txt")
 contenido = archivo.readlines()
 
 print("Entradas:")
 X = contenido[3:3+int(contenido[1])]
-X = [i.split(",") for i in X]
+X = [i.split("\t") for i in X]
 X = [list(map(int, i)) for i in X]
 print(X)
 
 print("Salidas:")
 Y = contenido[3+int(contenido[1]):]
-Y = [i.split(",") for i in Y]
+Y = [i.split("\t") for i in Y]
 Y = [list(map(int, i)) for i in Y]
 print(Y)
 
